@@ -403,7 +403,7 @@ function GeneratedPosts({ bouquets, selectedId, copy, isGenerating }: { bouquets
   );
 }
 
-function WeekStrip({ schedule, onDropPost }: { schedule: ScheduleSlot[]; onDropPost: (slotId: string, platform: Platform) => void }) {
+function WeekStrip({ schedule, onDropPost, onOpenCalendar }: { schedule: ScheduleSlot[]; onDropPost: (slotId: string, platform: Platform) => void; onOpenCalendar: () => void }) {
   const [dragOver, setDragOver] = useState<string | null>(null);
   const handleDragOver = (event: DragEvent<HTMLDivElement>, id: string) => {
     event.preventDefault();
@@ -419,7 +419,7 @@ function WeekStrip({ schedule, onDropPost }: { schedule: ScheduleSlot[]; onDropP
     <section className="week-strip-section">
       <div className="section-heading-row week-heading">
         <div><span className="eyebrow">04 / Schedule</span><h2>Drag into the week</h2></div>
-        <button className="text-button">Open calendar <ArrowUpRight size={14} /></button>
+        <button className="text-button" onClick={onOpenCalendar}>Open calendar <ArrowUpRight size={14} /></button>
       </div>
       <div className="week-strip">
         <button className="week-nav"><ChevronLeft size={16} /></button>
@@ -435,7 +435,7 @@ function WeekStrip({ schedule, onDropPost }: { schedule: ScheduleSlot[]; onDropP
   );
 }
 
-function CreateView({ bouquets, selectedId, onSelectBouquet, onUpload, holiday, offer, onHolidayChange, onOfferChange, onGenerate, isGenerating, copy, schedule, onDropPost }: {
+function CreateView({ bouquets, selectedId, onSelectBouquet, onUpload, holiday, offer, onHolidayChange, onOfferChange, onGenerate, isGenerating, copy, schedule, onDropPost, onOpenCalendar }: {
   bouquets: Bouquet[];
   selectedId: string;
   onSelectBouquet: (id: string) => void;
@@ -449,6 +449,7 @@ function CreateView({ bouquets, selectedId, onSelectBouquet, onUpload, holiday, 
   copy: CopySet;
   schedule: ScheduleSlot[];
   onDropPost: (slotId: string, platform: Platform) => void;
+  onOpenCalendar: () => void;
 }) {
   const selected = bouquets.find((item) => item.id === selectedId) ?? bouquets[0];
   return (
@@ -465,7 +466,7 @@ function CreateView({ bouquets, selectedId, onSelectBouquet, onUpload, holiday, 
         <CampaignSetup selectedBouquet={selected} holiday={holiday} offer={offer} onHolidayChange={onHolidayChange} onOfferChange={onOfferChange} onGenerate={onGenerate} isGenerating={isGenerating} />
       </div>
       <GeneratedPosts bouquets={bouquets} selectedId={selectedId} copy={copy} isGenerating={isGenerating} />
-      <WeekStrip schedule={schedule} onDropPost={onDropPost} />
+      <WeekStrip schedule={schedule} onDropPost={onDropPost} onOpenCalendar={onOpenCalendar} />
     </div>
   );
 }
@@ -498,11 +499,12 @@ function CalendarView({ schedule, onDropPost }: { schedule: ScheduleSlot[]; onDr
   );
 }
 
-function LibraryView({ bouquets, selectedId, onSelect }: { bouquets: Bouquet[]; selectedId: string; onSelect: (id: string) => void }) {
+function LibraryView({ bouquets, selectedId, onSelect, onUpload }: { bouquets: Bouquet[]; selectedId: string; onSelect: (id: string) => void; onUpload: (event: ChangeEvent<HTMLInputElement>) => void }) {
+  const uploadInput = useRef<HTMLInputElement>(null);
   return (
     <div className="page-content library-view">
       <div className="page-intro"><div><span className="eyebrow">06 stems on file</span><h1>Flowers worth<br /><em>writing about.</em></h1></div><div className="intro-aside"><span className="intro-mark"><Grid2X2 size={16} /></span><p>Each image is a starting point<br />for a new feeling.</p></div></div>
-      <div className="library-toolbar"><div className="library-count"><strong>{bouquets.length}</strong> bouquet photos</div><button className="outline-button"><ImagePlus size={15} /> Add photo</button></div>
+      <div className="library-toolbar"><div className="library-count"><strong>{bouquets.length}</strong> bouquet photos</div><button className="outline-button" onClick={() => uploadInput.current?.click()}><ImagePlus size={15} /> Add photo</button><input ref={uploadInput} type="file" accept="image/png,image/jpeg" onChange={onUpload} hidden /></div>
       <div className="library-grid">{bouquets.map((bouquet, index) => <button key={bouquet.id} className={`library-card ${selectedId === bouquet.id ? "selected" : ""}`} onClick={() => { onSelect(bouquet.id); toast.success(`${bouquet.name} is ready to compose with.`); }}><div className="library-image"><img src={bouquet.image} alt={bouquet.name} /><span className="library-index">0{index + 1}</span>{selectedId === bouquet.id && <span className="library-selected"><Check size={12} /> In use</span>}</div><div className="library-card-copy"><div><strong>{bouquet.name}</strong><span>{bouquet.detail}</span></div><ArrowUpRight size={15} /></div></button>)}</div>
     </div>
   );
@@ -578,9 +580,9 @@ export default function Home() {
       <Sidebar activeView={activeView} onChange={setActiveView} />
       <main className="studio-main">
         <TopBar activeView={activeView} onNewCampaign={handleNewCampaign} />
-        {activeView === "create" && <CreateView bouquets={bouquets} selectedId={selectedId} onSelectBouquet={setSelectedId} onUpload={handleUpload} holiday={holiday} offer={offer} onHolidayChange={setHoliday} onOfferChange={setOffer} onGenerate={handleGenerate} isGenerating={isGenerating} copy={copy} schedule={schedule} onDropPost={handleDropPost} />}
+        {activeView === "create" && <CreateView bouquets={bouquets} selectedId={selectedId} onSelectBouquet={setSelectedId} onUpload={handleUpload} holiday={holiday} offer={offer} onHolidayChange={setHoliday} onOfferChange={setOffer} onGenerate={handleGenerate} isGenerating={isGenerating} copy={copy} schedule={schedule} onDropPost={handleDropPost} onOpenCalendar={() => setActiveView("calendar")} />}
         {activeView === "calendar" && <CalendarView schedule={schedule} onDropPost={handleDropPost} />}
-        {activeView === "library" && <LibraryView bouquets={bouquets} selectedId={selectedId} onSelect={setSelectedId} />}
+        {activeView === "library" && <LibraryView bouquets={bouquets} selectedId={selectedId} onSelect={setSelectedId} onUpload={handleUpload} />}
         {activeView === "voice" && <VoiceView />}
       </main>
     </div>
