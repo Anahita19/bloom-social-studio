@@ -46,6 +46,8 @@ The output is written to `dist/public`.
 
 See [`docs/demo.md`](docs/demo.md) for the complete demo script and acceptance notes.
 
+For a reviewer-ready pass, use [`docs/qa-checklist.md`](docs/qa-checklist.md). The latest shipped changes are listed in [`CHANGELOG.md`](CHANGELOG.md), and contribution conventions live in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
 ## Project structure
 
 ```text
@@ -60,6 +62,8 @@ docs/
   assets/bloom-create-demo.png  # Repository preview image
 plan.md                         # Approved product and design plan
 TODO.md                         # Delivered outcome checklist
+CHANGELOG.md                    # Release history
+CONTRIBUTING.md                 # Contributor workflow
 ```
 
 ## Development notes

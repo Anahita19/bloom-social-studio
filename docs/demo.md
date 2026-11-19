@@ -28,6 +28,8 @@ Drag a preview card by its **drag to schedule** affordance and drop it on one of
 
 Select **Open calendar** to see the full week. Existing sample content is already distributed across Monday through Friday so the workspace feels populated on first open.
 
+If you prefer not to drag, click an empty Saturday or Sunday slot. Bloom adds the default Instagram draft and confirms the scheduled day. The same click-to-add behavior is available in the full Calendar view.
+
 ### 5. Explore the studio utilities
 
 - **Calendar** gives a full seven-day view with channel color coding.
@@ -41,3 +43,5 @@ The repository preview image is stored at [`docs/assets/bloom-create-demo.png`](
 ## Acceptance notes
 
 The demo is intentionally self-contained and does not require an external LLM or database. Generation is simulated locally so the product flow can be reviewed immediately. The app is ready for a later integration with a durable storage layer and a production copy-generation endpoint.
+
+For a complete reviewer pass, follow [`qa-checklist.md`](qa-checklist.md) after this walkthrough.

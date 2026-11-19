@@ -403,7 +403,7 @@ function GeneratedPosts({ bouquets, selectedId, copy, isGenerating }: { bouquets
   );
 }
 
-function WeekStrip({ schedule, onDropPost, onOpenCalendar }: { schedule: ScheduleSlot[]; onDropPost: (slotId: string, platform: Platform) => void; onOpenCalendar: () => void }) {
+function WeekStrip({ schedule, onDropPost, onOpenCalendar, onQuickAdd }: { schedule: ScheduleSlot[]; onDropPost: (slotId: string, platform: Platform) => void; onOpenCalendar: () => void; onQuickAdd: (slotId: string) => void }) {
   const [dragOver, setDragOver] = useState<string | null>(null);
   const handleDragOver = (event: DragEvent<HTMLDivElement>, id: string) => {
     event.preventDefault();
@@ -426,7 +426,7 @@ function WeekStrip({ schedule, onDropPost, onOpenCalendar }: { schedule: Schedul
         {schedule.map((slot) => (
           <div key={slot.id} className={`week-day ${dragOver === slot.id ? "drag-over" : ""}`} onDragOver={(event) => handleDragOver(event, slot.id)} onDragLeave={() => setDragOver(null)} onDrop={(event) => handleDrop(event, slot.id)}>
             <div className="day-top"><span>{slot.day}</span><strong>{slot.date}</strong></div>
-            {slot.post ? <div className="scheduled-mini" style={{ background: slot.post.color }}><span className="mini-platform"><PlatformIcon platform={slot.post.platform} size={12} /></span><strong>{slot.post.title}</strong><span className="mini-time"><Clock3 size={10} /> {slot.post.time}</span></div> : <div className="empty-drop"><Plus size={14} /><span>Drop here</span></div>}
+            {slot.post ? <div className="scheduled-mini" style={{ background: slot.post.color }}><span className="mini-platform"><PlatformIcon platform={slot.post.platform} size={12} /></span><strong>{slot.post.title}</strong><span className="mini-time"><Clock3 size={10} /> {slot.post.time}</span></div> : <button className="empty-drop" onClick={() => onQuickAdd(slot.id)}><Plus size={14} /><span>Drop here</span><small>or click to add</small></button>}
           </div>
         ))}
         <button className="week-nav"><ChevronRight size={16} /></button>
@@ -435,7 +435,7 @@ function WeekStrip({ schedule, onDropPost, onOpenCalendar }: { schedule: Schedul
   );
 }
 
-function CreateView({ bouquets, selectedId, onSelectBouquet, onUpload, holiday, offer, onHolidayChange, onOfferChange, onGenerate, isGenerating, copy, schedule, onDropPost, onOpenCalendar }: {
+function CreateView({ bouquets, selectedId, onSelectBouquet, onUpload, holiday, offer, onHolidayChange, onOfferChange, onGenerate, isGenerating, copy, schedule, onDropPost, onOpenCalendar, onQuickAdd }: {
   bouquets: Bouquet[];
   selectedId: string;
   onSelectBouquet: (id: string) => void;
@@ -450,6 +450,7 @@ function CreateView({ bouquets, selectedId, onSelectBouquet, onUpload, holiday, 
   schedule: ScheduleSlot[];
   onDropPost: (slotId: string, platform: Platform) => void;
   onOpenCalendar: () => void;
+  onQuickAdd: (slotId: string) => void;
 }) {
   const selected = bouquets.find((item) => item.id === selectedId) ?? bouquets[0];
   return (
@@ -466,12 +467,12 @@ function CreateView({ bouquets, selectedId, onSelectBouquet, onUpload, holiday, 
         <CampaignSetup selectedBouquet={selected} holiday={holiday} offer={offer} onHolidayChange={onHolidayChange} onOfferChange={onOfferChange} onGenerate={onGenerate} isGenerating={isGenerating} />
       </div>
       <GeneratedPosts bouquets={bouquets} selectedId={selectedId} copy={copy} isGenerating={isGenerating} />
-      <WeekStrip schedule={schedule} onDropPost={onDropPost} onOpenCalendar={onOpenCalendar} />
+      <WeekStrip schedule={schedule} onDropPost={onDropPost} onOpenCalendar={onOpenCalendar} onQuickAdd={onQuickAdd} />
     </div>
   );
 }
 
-function CalendarView({ schedule, onDropPost }: { schedule: ScheduleSlot[]; onDropPost: (slotId: string, platform: Platform) => void }) {
+function CalendarView({ schedule, onDropPost, onQuickAdd }: { schedule: ScheduleSlot[]; onDropPost: (slotId: string, platform: Platform) => void; onQuickAdd: (slotId: string) => void }) {
   const [dragOver, setDragOver] = useState<string | null>(null);
   const handleDrop = (event: DragEvent<HTMLDivElement>, id: string) => {
     event.preventDefault();
@@ -490,7 +491,7 @@ function CalendarView({ schedule, onDropPost }: { schedule: ScheduleSlot[]; onDr
         {schedule.map((slot) => (
           <div key={slot.id} className={`calendar-day ${dragOver === slot.id ? "drag-over" : ""}`} onDragOver={(event) => { event.preventDefault(); setDragOver(slot.id); }} onDragLeave={() => setDragOver(null)} onDrop={(event) => handleDrop(event, slot.id)}>
             <div className="calendar-day-head"><span>{slot.day}</span><strong>{slot.date}</strong></div>
-            <div className="calendar-day-body">{slot.post ? <div className="calendar-post" style={{ background: slot.post.color }} draggable onDragStart={(event) => event.dataTransfer.setData("text/bloom-platform", slot.post?.platform ?? "instagram")}><div className="calendar-post-meta"><PlatformIcon platform={slot.post.platform} size={14} /><span>{platformMeta[slot.post.platform].label}</span><MoreHorizontal size={14} /></div><strong>{slot.post.title}</strong><span className="calendar-time"><Clock3 size={12} /> {slot.post.time}</span></div> : <div className="calendar-drop"><Plus size={18} /><span>Drop a post here</span><small>or click to add</small></div>}</div>
+            <div className="calendar-day-body">{slot.post ? <div className="calendar-post" style={{ background: slot.post.color }} draggable onDragStart={(event) => event.dataTransfer.setData("text/bloom-platform", slot.post?.platform ?? "instagram")}><div className="calendar-post-meta"><PlatformIcon platform={slot.post.platform} size={14} /><span>{platformMeta[slot.post.platform].label}</span><MoreHorizontal size={14} /></div><strong>{slot.post.title}</strong><span className="calendar-time"><Clock3 size={12} /> {slot.post.time}</span></div> : <button className="calendar-drop" onClick={() => onQuickAdd(slot.id)}><Plus size={18} /><span>Drop a post here</span><small>or click to add</small></button>}</div>
           </div>
         ))}
       </div>
@@ -568,6 +569,10 @@ export default function Home() {
     toast.success(`${platformMeta[platform].label} post scheduled for ${schedule.find((slot) => slot.id === slotId)?.day ?? "this day"}.`);
   };
 
+  const handleQuickAdd = (slotId: string) => {
+    handleDropPost(slotId, "instagram");
+  };
+
   const handleNewCampaign = () => {
     setActiveView("create");
     setIsGenerating(false);
@@ -580,8 +585,8 @@ export default function Home() {
       <Sidebar activeView={activeView} onChange={setActiveView} />
       <main className="studio-main">
         <TopBar activeView={activeView} onNewCampaign={handleNewCampaign} />
-        {activeView === "create" && <CreateView bouquets={bouquets} selectedId={selectedId} onSelectBouquet={setSelectedId} onUpload={handleUpload} holiday={holiday} offer={offer} onHolidayChange={setHoliday} onOfferChange={setOffer} onGenerate={handleGenerate} isGenerating={isGenerating} copy={copy} schedule={schedule} onDropPost={handleDropPost} onOpenCalendar={() => setActiveView("calendar")} />}
-        {activeView === "calendar" && <CalendarView schedule={schedule} onDropPost={handleDropPost} />}
+        {activeView === "create" && <CreateView bouquets={bouquets} selectedId={selectedId} onSelectBouquet={setSelectedId} onUpload={handleUpload} holiday={holiday} offer={offer} onHolidayChange={setHoliday} onOfferChange={setOffer} onGenerate={handleGenerate} isGenerating={isGenerating} copy={copy} schedule={schedule} onDropPost={handleDropPost} onOpenCalendar={() => setActiveView("calendar")} onQuickAdd={handleQuickAdd} />}
+        {activeView === "calendar" && <CalendarView schedule={schedule} onDropPost={handleDropPost} onQuickAdd={handleQuickAdd} />}
         {activeView === "library" && <LibraryView bouquets={bouquets} selectedId={selectedId} onSelect={setSelectedId} onUpload={handleUpload} />}
         {activeView === "voice" && <VoiceView />}
       </main>

@@ -14,6 +14,8 @@ Bloom is currently a static Vite + React experience. The existing starter includ
 - `copy` stores the three platform outputs.
 - `schedule` stores the seven-day sample week and drop results.
 
+Empty schedule slots accept either a dragged platform preview or a click. Click-to-add uses the default Instagram draft as a quick scheduling shortcut; both paths update the same `schedule` state and confirmation toast.
+
 The primary create flow is composed from focused view components: `BouquetPicker`, `CampaignSetup`, `GeneratedPosts`, `PhoneFrame`, and `WeekStrip`.
 
 ## Asset strategy

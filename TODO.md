@@ -13,8 +13,10 @@
 - [x] A weekly publishing calendar is preloaded with one week of sample content across five publishing slots.
 - [x] Generated post chips can be dragged into calendar day slots, with visible drop affordances and an update confirmation.
 - [x] Calendar view is available from the primary navigation and retains the preloaded week content.
+- [x] Empty week-strip and full-calendar slots can be clicked to add the default Instagram draft, in addition to drag-and-drop.
 
 ## Deliver the floral-magazine studio
 - [x] The visual system uses generous white space, elegant serif typography, blush pink and sage green, and bouquet photography throughout.
 - [x] The app is responsive and provides Library and Brand voice utility views within the same studio shell.
 - [x] The project exposes a valid `/manus-routes.json` manifest and has a project logo metadata file.
+- [x] The repository includes a complete README, Persian quick-start, demo guide, architecture notes, QA checklist, changelog, and contribution guide.
